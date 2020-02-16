@@ -14,6 +14,8 @@ extern {
 }
 
 #[wasm_bindgen]
-pub fn greet() {
-    alert("Hello, wasm-game-of-life!");
+pub fn greet(name: &str) {
+    // Concating then converting from String to &str
+    let s = &(format!("Hello, {}!", name))[..];
+    alert(s);
 }
