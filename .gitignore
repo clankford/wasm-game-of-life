@@ -6,4 +6,4 @@ pkg/
 wasm-pack.log
 .DS_Store
 **/node_modules
-**/.bin
+/www/.bin
