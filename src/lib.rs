@@ -141,6 +141,8 @@ impl Universe {
 
     // Constructor for a new Universe
     pub fn new() -> Universe {
+        
+        // Hook for displaying panics in the console.
         utils::set_panic_hook();
         
         let width = 64;
