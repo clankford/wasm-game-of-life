@@ -175,6 +175,15 @@ impl Universe {
         }
     }
 
+    pub fn kill_universe(&mut self) {
+        for row in 0..self.height {
+            for col in 0..self.width {
+                let idx = self.get_index(row, col);
+                self.cells[idx] = Cell::Dead;
+            }
+        }
+    }
+
     pub fn toggle_cell(&mut self, row: u32, column: u32) {
         let idx = self.get_index(row, column);
         self.cells[idx].toggle();

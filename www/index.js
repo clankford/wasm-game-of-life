@@ -7,7 +7,7 @@ const DEAD_COLOR = "#FFFFFF";
 const ALIVE_COLOR = "#000000";
 
 // Construct the universe, and get its width and height.
-const universe = Universe.new();
+let universe = Universe.new();
 const width = universe.width();
 const height = universe.height();
 
@@ -46,6 +46,40 @@ playPauseButton.addEventListener("click", event => {
     }
 });
 
+// This block of code handles setting default values for ticks per frame
+// and wiring up the events for the input range UI elements.
+const ticksFrameInputRange = document.getElementById("ticks-frame");
+const ticksValue = document.getElementById('ticks-value');
+let ticksPerFrame = 1;
+
+const updateTicks = () => {
+    ticksPerFrame = ticksFrameInputRange.value;
+    ticksValue.innerHTML = ticksFrameInputRange.value;
+};
+
+ticksFrameInputRange.addEventListener('input', updateTicks);
+
+// Resets the universe to a random initial state when that button is pressed.
+const resetButton = document.getElementById("reset");
+
+resetButton.addEventListener('click', event => {
+    pause();
+    universe = Universe.new();
+    drawGrid();
+    drawCells();
+});
+
+// Kills the current universe
+const killButton = document.getElementById("all-dead");
+
+killButton.addEventListener('click', event => {
+    pause();
+    universe.kill_universe();
+    drawGrid();
+    drawCells();
+});
+
+// Allows for click on a grid cell to toggle the state of that cell.
 canvas.addEventListener("click", event => {
     const boundingRect = canvas.getBoundingClientRect();
 
@@ -65,9 +99,13 @@ canvas.addEventListener("click", event => {
 });
 
 const renderLoop = () => {
-    // debugger; Allows for stepping through the code.
-    universe.tick();
-
+    // debugger; // Allows for stepping through the code.
+    
+    // Uses the input from the range to tick that number of generations before
+    // updating the grid & cells.
+    for (let i = 0; i < ticksPerFrame; i++) {
+        universe.tick();
+    }
     drawGrid();
     drawCells();
 
@@ -125,6 +163,7 @@ const drawCells = () => {
     ctx.stroke();
 };
 
+updateTicks();
 drawGrid();
 drawCells();
 play();
