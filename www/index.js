@@ -63,8 +63,7 @@ ticksFrameInputRange.addEventListener('input', updateTicks);
 const resetButton = document.getElementById("reset");
 
 resetButton.addEventListener('click', event => {
-    pause();
-    universe = Universe.new();
+    universe = Universe.random_universe();
     drawGrid();
     drawCells();
 });

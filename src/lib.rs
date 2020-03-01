@@ -1,9 +1,11 @@
 mod utils;
 
+extern crate web_sys;
+extern crate rand;
+
 use wasm_bindgen::prelude::*;
 use std::fmt;
-
-extern crate web_sys;
+use rand::Rng;
 
 // Macro to simplify logging.
 #[allow(unused_macros)]
@@ -163,6 +165,32 @@ impl Universe {
                 if i % 2 == 0 || i % 7 == 0 {
                     Cell::Alive
                 } else {
+                    Cell::Dead
+                }
+            })
+            .collect();
+        
+        Universe {
+            width,
+            height,
+            cells
+        }
+    }
+
+    pub fn random_universe() -> Universe {
+        
+        let mut rng = rand::thread_rng();
+
+        let width = 64;
+        let height = 64;
+
+        let cells = (0..width * height)
+            .map(|_| rng.gen_range(0, 2))
+            .map(|i| {
+                if i == 0 {
+                    Cell::Alive
+                }
+                else {
                     Cell::Dead
                 }
             })
