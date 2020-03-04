@@ -203,6 +203,7 @@ impl Universe {
         }
     }
 
+    // Refactor to use Map
     pub fn kill_universe(&mut self) {
         for row in 0..self.height {
             for col in 0..self.width {
@@ -210,6 +211,49 @@ impl Universe {
                 self.cells[idx] = Cell::Dead;
             }
         }
+    }
+
+    pub fn create_pulsar(&mut self, row: u32, column: u32) {
+        let y_axis = column;
+        let x_axis = row;
+
+        // Seed initial pulsar segment - upper left segment.
+        // let mut pulsar = vec![(3,5),(3,6),(3,7),(5,3),(5,8),(6,3),(6,8),(7,3),(7,8),(8,5),(8,6),(8,7)];
+        
+        // 0 centered: Seed initial pulsar segment - upper right segment.
+        let pulsar_seed = vec![(6,4),(6,3),(6,2),(4,6),(4,1),(3,6),(3,1),(2,6),(2,1),(1,4),(1,3),(1,2)];
+
+        // Map the shape of the upper right pulsar segment to the offset from click location.
+        let mut pulsar: Vec<(u32, u32)> =
+                        pulsar_seed.iter()
+                            .map(|pair| {
+                                (row + pair.0, column + pair.1)
+                            })
+                            .collect();
+
+        // Mirror initial pulsar segment on Y axis.
+        let pulsar_segment: Vec<(u32, u32)> = 
+                                pulsar.iter()
+                                    .map(|pair| {
+                                        (pair.0, y_axis + (y_axis - pair.1))
+                                    })
+                                    .collect();
+        
+        // Combine mirrored segment with initial segment, resulting in top half of pulsar.
+        pulsar.extend(pulsar_segment);
+        
+        // Mirror top half pulsar segment on X axis.
+        let pulsar_segment: Vec<(u32, u32)> = 
+                                pulsar.iter()
+                                    .map(|pair| {
+                                        (x_axis + (x_axis - pair.0), pair.1)
+                                    })
+                                    .collect();
+        
+        // Combine top half segment with bottom half segment.
+        pulsar.extend(pulsar_segment);
+
+        self.set_cells(&pulsar);
     }
 
     pub fn toggle_cell(&mut self, row: u32, column: u32) {
