@@ -7,6 +7,8 @@ use wasm_bindgen::prelude::*;
 use std::fmt;
 use rand::Rng;
 
+// TODO: Add ability to slow down
+
 // Macro to simplify logging.
 #[allow(unused_macros)]
 macro_rules! log {
@@ -157,8 +159,8 @@ impl Universe {
         // Hook for displaying panics in the console.
         utils::set_panic_hook();
         
-        let width = 64;
-        let height = 64;
+        let width = 100;
+        let height = 100;
 
         let cells = (0..width * height)
             .map(|i| {
@@ -181,8 +183,8 @@ impl Universe {
         
         let mut rng = rand::thread_rng();
 
-        let width = 64;
-        let height = 64;
+        let width = 100;
+        let height = 100;
 
         let cells = (0..width * height)
             .map(|_| rng.gen_range(0, 2))
@@ -213,13 +215,11 @@ impl Universe {
         }
     }
 
+    // Creates a pulsar centered at the row / col location.
     pub fn create_pulsar(&mut self, row: u32, column: u32) {
         let y_axis = column;
         let x_axis = row;
 
-        // Seed initial pulsar segment - upper left segment.
-        // let mut pulsar = vec![(3,5),(3,6),(3,7),(5,3),(5,8),(6,3),(6,8),(7,3),(7,8),(8,5),(8,6),(8,7)];
-        
         // 0 centered: Seed initial pulsar segment - upper right segment.
         let pulsar_seed = vec![(6,4),(6,3),(6,2),(4,6),(4,1),(3,6),(3,1),(2,6),(2,1),(1,4),(1,3),(1,2)];
 
@@ -227,7 +227,7 @@ impl Universe {
         let mut pulsar: Vec<(u32, u32)> =
                         pulsar_seed.iter()
                             .map(|pair| {
-                                (row + pair.0, column + pair.1)
+                                ((row + pair.0) % self.height , (column + pair.1) % self.width)
                             })
                             .collect();
 
@@ -235,7 +235,7 @@ impl Universe {
         let pulsar_segment: Vec<(u32, u32)> = 
                                 pulsar.iter()
                                     .map(|pair| {
-                                        (pair.0, y_axis + (y_axis - pair.1))
+                                        (pair.0 % self.height, (y_axis + (y_axis - pair.1)) % self.width)
                                     })
                                     .collect();
         
@@ -246,7 +246,7 @@ impl Universe {
         let pulsar_segment: Vec<(u32, u32)> = 
                                 pulsar.iter()
                                     .map(|pair| {
-                                        (x_axis + (x_axis - pair.0), pair.1)
+                                        ((x_axis + (x_axis - pair.0)) % self.height, pair.1 % self.width)
                                     })
                                     .collect();
         

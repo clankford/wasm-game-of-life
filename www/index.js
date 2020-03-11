@@ -92,9 +92,7 @@ canvas.addEventListener("click", event => {
     const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE + 1)), width - 1);
 
     if (event.shiftKey) {
-        universe.create_pulsar(row, col);
-        drawGrid();
-        drawCells(); 
+        universe.create_pulsar(row, col); 
     }
     else {
         universe.toggle_cell(row, col);
