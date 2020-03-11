@@ -80,19 +80,14 @@ killButton.addEventListener('click', event => {
 
 // Allows for click on a grid cell to toggle the state of that cell.
 canvas.addEventListener("click", event => {
-    const boundingRect = canvas.getBoundingClientRect();
-
-    const scaleX = canvas.width / boundingRect.width;
-    const scaleY = canvas.height / boundingRect.height;
-
-    const canvasLeft = (event.clientX - boundingRect.left) * scaleX;
-    const canvasTop = (event.clientY - boundingRect.top) * scaleY;
-
-    const row = Math.min(Math.floor(canvasTop / (CELL_SIZE + 1)), height - 1);
-    const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE + 1)), width - 1);
+    
+    let [row, col] = getClickCoordinates(event.clientX, event.clientY);
 
     if (event.shiftKey) {
         universe.create_pulsar(row, col); 
+    }
+    else if (event.ctrlKey) {
+        universe.create_glider(row, col);
     }
     else {
         universe.toggle_cell(row, col);
@@ -101,6 +96,31 @@ canvas.addEventListener("click", event => {
     drawGrid();
     drawCells();
 });
+
+canvas.addEventListener("contextmenu", event => {
+    event.preventDefault();
+    let [row, col] = getClickCoordinates(event.clientX, event.clientY);
+    universe.create_glider(row, col);
+    drawGrid();
+    drawCells();
+});
+
+
+
+const getClickCoordinates = (x, y) => {
+    const boundingRect = canvas.getBoundingClientRect();
+
+    const scaleX = canvas.width / boundingRect.width;
+    const scaleY = canvas.height / boundingRect.height;
+
+    const canvasLeft = (x - boundingRect.left) * scaleX;
+    const canvasTop = (y - boundingRect.top) * scaleY;
+
+    const row = Math.min(Math.floor(canvasTop / (CELL_SIZE + 1)), height - 1);
+    const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE + 1)), width - 1);
+
+    return [row, col]
+}
 
 const renderLoop = () => {
     // debugger; // Allows for stepping through the code.

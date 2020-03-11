@@ -7,8 +7,6 @@ use wasm_bindgen::prelude::*;
 use std::fmt;
 use rand::Rng;
 
-// TODO: Add ability to slow down
-
 // Macro to simplify logging.
 #[allow(unused_macros)]
 macro_rules! log {
@@ -254,6 +252,21 @@ impl Universe {
         pulsar.extend(pulsar_segment);
 
         self.set_cells(&pulsar);
+    }
+
+    pub fn create_glider(&mut self, row: u32, column: u32) {
+        // 0 centered: Seed for glider.
+        let glider_seed = vec![(0,2),(1,0),(1,2),(2,1),(2,2)];
+
+        // Map the shape of glider to the offset from click location.
+        let glider: Vec<(u32, u32)> =
+                        glider_seed.iter()
+                            .map(|pair| {
+                                ((row + pair.0) % self.height , (column + pair.1) % self.width)
+                            })
+                            .collect();
+        
+        self.set_cells(&glider);
     }
 
     pub fn toggle_cell(&mut self, row: u32, column: u32) {
